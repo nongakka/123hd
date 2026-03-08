@@ -1,0 +1,43 @@
+[
+  {
+  "name": "หนังชนโรง",
+  "slug": "cinema",
+  "url": "https://www.123hdtv.com/หนังชนโรง"
+  },
+  {
+  "name": "หนังไทย",
+  "slug": "thai",
+  "url": "https://www.123hdtv.com/ดูหนังออนไลน์/หนังไทย"
+  },
+  {
+  "name": "หนังจีน",
+  "slug": "china",
+  "url": "https://www.123hdtv.com/ดูหนังออนไลน์/หนังจีน"
+  },
+  {
+  "name": "หนังญี่ปุ่น",
+  "slug": "japan",
+  "url": "https://www.123hdtv.com/ดูหนังออนไลน์/หนังญี่ปุ่น"
+  },
+  {
+  "name": "หนังเกาหลี",
+  "slug": "korean",
+  "url": "https://www.123hdtv.com/ดูหนังออนไลน์/หนังเกาหลี"
+  },
+  {
+  "name": "หนัง-hbo",
+  "slug": "hbo",
+  "url": "https://www.123hdtv.com/หนัง-hbo"
+  },{
+  "name": "รวมหนัง-marvel",
+  "slug": "marvel",
+  "url": "https://www.123hdtv.com/รวมหนัง-marvel"
+  },
+  {
+  "name": "หนังซอมบี้",
+  "slug": "zombie",
+  "url": "https://www.123hdtv.com/หนังซอมบี้"
+  }
+  
+  
+]
