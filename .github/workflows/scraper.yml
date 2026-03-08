@@ -5,9 +5,18 @@ on:
     - cron: "0 */6 * * *"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    timeout-minutes: 350
+
+    strategy:
+      fail-fast: false
+      matrix:
+        group: [0,1,2]
 
     steps:
       - name: Checkout repo
@@ -21,5 +30,32 @@ jobs:
       - name: Install dependencies
         run: npm install axios cheerio
 
+      - name: Select categories
+        id: cats
+        run: |
+
+          RUN=$(( ${{ github.run_number }} % 3 ))
+
+          if [ "$RUN" -eq "0" ]; then
+            echo "cats=cinema thai china" >> $GITHUB_OUTPUT
+          elif [ "$RUN" -eq "1" ]; then
+            echo "cats=japan korean hbo" >> $GITHUB_OUTPUT
+          else
+            echo "cats=marvel zombie" >> $GITHUB_OUTPUT
+          fi
+
       - name: Run scraper
-        run: node scraper.js
+        run: |
+          for c in ${{ steps.cats.outputs.cats }}
+          do
+            echo "Scraping category: $c"
+            node scraper.js $c
+          done
+
+      - name: Commit results
+        run: |
+          git config --global user.name github-actions
+          git config --global user.email actions@github.com
+          git add .
+          git commit -m "scraper update" || echo "no changes"
+          git push
