@@ -2,7 +2,7 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const fs = require("fs");
 const { execSync } = require("child_process");
-
+const targetCategory = process.argv[2];
 const START_TIME = Date.now();
 const MAX_RUNTIME = 340 * 60 * 1000;
 
@@ -541,14 +541,14 @@ async function start(){
 
   for(const category of categories){
 
+    if(targetCategory && category.slug !== targetCategory)
+      continue;
+
     console.log("=============");
     console.log("หมวด:", category.name);
     console.log("=============");
 
     await run(category);
-
-    console.log("หมวดเสร็จ:", category.name);
-    autoCommit();
 
   }
 
