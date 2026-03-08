@@ -2,13 +2,11 @@ name: Movie Scraper
 
 on:
   schedule:
-    - cron: "0 */6 * * *"
-  workflow_dispatch:
-
+    
 permissions:
   contents: write
 
-jobs:
+jobs: 
   scrape:
     runs-on: ubuntu-latest
     timeout-minutes: 350
