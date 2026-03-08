@@ -1,16 +1,44 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 const fs = require("fs");
+const { execSync } = require("child_process");
+
+const START_TIME = Date.now();
+const MAX_RUNTIME = 340 * 60 * 1000;
 
 const categories = JSON.parse(fs.readFileSync("categories.json"));
 
 let progress = {};
 
 if(fs.existsSync("progress.json")){
-  progress = JSON.parse(fs.readFileSync("progress.json"));
+  try{
+    progress = JSON.parse(fs.readFileSync("progress.json"));
+  }catch(e){
+    console.log("progress.json เสีย เริ่มใหม่");
+    progress = {};
+  }
 }
 
+function autoCommit(){
 
+  try{
+
+    execSync("git config --global user.name github-actions");
+    execSync("git config --global user.email actions@github.com");
+
+    execSync("git add .");
+    execSync('git commit -m "auto scraper progress"');
+    execSync("git push");
+
+    console.log("commit สำเร็จ");
+
+  }catch(e){
+
+    console.log("ไม่มีอะไรให้ commit");
+
+  }
+
+}
 async function runBatch(list, limit, fn){
 
   const results = [];
@@ -319,10 +347,33 @@ async function run(category) {
   const maxPages = 100;
   const allMovies = [];
   const seenLinks = new Set();   // ⭐ เพิ่มบรรทัดนี้
+  
+  const filePath = `data/movies/${category.slug}.json`;
 
+  if(fs.existsSync(filePath)){
+
+    try{
+
+      const oldMovies = JSON.parse(fs.readFileSync(filePath));
+
+      for(const m of oldMovies){
+      if(m.link) seenLinks.add(m.link);
+      }
+
+      console.log("โหลดหนังเก่า:", seenLinks.size);
+
+    }catch(e){
+      console.log("อ่านไฟล์หนังเก่าไม่ได้");
+    }
+
+  }
 
 while (true) {
-
+if(Date.now() - START_TIME > MAX_RUNTIME){
+    console.log("ใกล้หมดเวลา หยุดเพื่อ resume รอบหน้า");
+    autoCommit();
+    process.exit();
+  }
 if(page > maxPages){
   console.log("ถึงหน้าสูงสุดแล้ว");
   break;
@@ -372,7 +423,9 @@ const $ = cheerio.load(html);
   });
 
   console.log("พบ", movies.length, "เรื่อง");
-
+  if(movies.length <= 2){
+  console.log("หนังน้อยผิดปกติ อาจใกล้จบหมวด");
+  }
   if (movies.length === 0) {
 
   console.log("หน้านี้ไม่มีข้อมูล");
@@ -476,6 +529,11 @@ console.log("สร้าง playlist แล้ว");
 progress[category.slug] = page;
 fs.writeFileSync("progress.json", JSON.stringify(progress,null,2));
 
+if(page % 10 === 0){
+  console.log("checkpoint commit หน้า:", page);
+  autoCommit();
+}
+
 page++; // ไปหน้าถัดไป
 }
 }
@@ -488,6 +546,9 @@ async function start(){
     console.log("=============");
 
     await run(category);
+
+    console.log("หมวดเสร็จ:", category.name);
+    autoCommit();
 
   }
 
