@@ -1,4 +1,6 @@
 {
   "category": 0,
-  "page": 1
+  "page": 1,
+  "marvel": 2,
+  "zombie": 3
 }
