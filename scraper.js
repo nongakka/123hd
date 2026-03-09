@@ -529,7 +529,7 @@ console.log("สร้าง playlist แล้ว");
 progress[category.slug] = page;
 fs.writeFileSync("progress.json", JSON.stringify(progress,null,2));
 
-if(page % 10 === 0){
+if(page % 5 === 0){
   console.log("checkpoint commit หน้า:", page);
   autoCommit();
 }
