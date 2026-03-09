@@ -366,11 +366,13 @@ async function run(category) {
 
     try{
 
-      const oldMovies = JSON.parse(fs.readFileSync(filePath));
+const oldMovies = JSON.parse(fs.readFileSync(filePath));
 
-      for(const m of oldMovies){
-      if(m.link) seenLinks.add(m.link);
-      }
+allMovies.push(...oldMovies);   // ⭐ เพิ่มบรรทัดนี้
+
+for(const m of oldMovies){
+  if(m.link) seenLinks.add(m.link);
+}
 
       console.log("โหลดหนังเก่า:", seenLinks.size);
 
