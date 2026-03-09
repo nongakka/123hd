@@ -287,7 +287,7 @@ async function fetchHalimPlayer(url){
 
   const ajaxHtml = res.data;
 
-  const iframeMatch = ajaxHtml.match(/src="([^"]+)"/);
+  const iframeMatch = ajaxHtml.match(/src=["']([^"']+)["']/);
 
   if(!iframeMatch){
     console.log("ไม่พบ iframe player");
