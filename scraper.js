@@ -27,14 +27,21 @@ function autoCommit(){
     execSync("git config --global user.email actions@github.com");
 
     execSync("git add .");
-    execSync('git commit -m "auto scraper progress"');
+
+    try{
+      execSync('git commit -m "auto scraper progress"');
+    }catch(e){
+      console.log("ไม่มีไฟล์เปลี่ยน");
+    }
+
+    execSync("git pull --rebase");
     execSync("git push");
 
     console.log("commit สำเร็จ");
 
   }catch(e){
 
-    console.log("ไม่มีอะไรให้ commit");
+    console.log("commit error แต่ scraper ทำงานต่อ");
 
   }
 
