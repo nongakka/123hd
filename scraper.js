@@ -48,19 +48,13 @@ function autoCommit(){
 }
 async function runBatch(list, limit, fn){
 
-  const results = [];
-
   for(let i=0;i<list.length;i+=limit){
 
     const chunk = list.slice(i,i+limit);
 
-    const res = await Promise.all(chunk.map(fn));
-
-    results.push(...res);
+    await Promise.all(chunk.map(fn));
 
   }
-
-  return results;
 
 }
 
