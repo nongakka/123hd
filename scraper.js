@@ -296,7 +296,12 @@ async function fetchHalimPlayer(url){
 
   const playerUrl = iframeMatch[1];
 
-  console.log("iframe player:", playerUrl);
+console.log("iframe player:", playerUrl);
+
+if(playerUrl.includes("fileprocess.html")){
+  console.log("ข้าม proxy player");
+  return null;
+}
 
   // แปลงเป็น m3u8 แบบ Android
   const idMatch = playerUrl.match(/id=([^&]+)/);
