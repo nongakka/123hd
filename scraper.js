@@ -548,15 +548,32 @@ for (const movie of allMovies){
   playlist.push(movie.player);
 
 }
+const playlistJson = [];
 
+for (const movie of allMovies){
+
+  if (!movie.player) continue;
+
+  playlistJson.push({
+    title: movie.title,
+    logo: movie.image,
+    url: movie.player
+  });
+
+}
+  
 if (!fs.existsSync("data/playlist"))
   fs.mkdirSync("data/playlist",{recursive:true});
-
+if (!fs.existsSync("data/playlist-json"))
+  fs.mkdirSync("data/playlist-json",{recursive:true});
 fs.writeFileSync(
   `data/playlist/${category.slug}.m3u`,
   playlist.join("\n")
 );
-
+fs.writeFileSync(
+  `data/playlist-json/${category.slug}.json`,
+  JSON.stringify(playlistJson,null,2)
+);
 console.log("สร้าง playlist แล้ว");
 
 progress[category.slug] = page + 1;
