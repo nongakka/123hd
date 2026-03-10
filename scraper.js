@@ -96,6 +96,15 @@ async function fetchPage(url) {
 async function fetchMoviePlayer(url){
 
   const html = await fetchPage(url);
+
+if(!html){
+  console.log("stream page ว่าง");
+  return null;
+}
+  if(html.length < 500){
+  console.log("หน้าเล็กผิดปกติ ข้าม:", url);
+  return null;
+}
   console.log("movie page loaded");
   console.log("HTML size:", html.length);
   const postMatch = html.match(/"post_url":"([^"]+)"/);
@@ -214,7 +223,12 @@ async function fetchHalimPlayer(url){
 
   const html = await fetchPage(url);
 
-  const $ = cheerio.load(html);
+if(!html){
+  console.log("โหลดหน้า player ไม่ได้");
+  return null;
+}
+
+const $ = cheerio.load(html);
 
   // หา nonce
   let nonce = null;
@@ -388,15 +402,24 @@ if(page > maxPages){
 }
 
   const url = page === 1
-    ? category.url
-    : `${category.url}/page/${page}`
+  ? category.url
+  : `${category.url}/page/${page}`;
 
   console.log("กำลังดึงหน้า:", url);
 
 const html = await fetchPage(url);
 
-if(!html){
-  console.log("ข้ามหน้าเสีย:",url);
+if(!html || html.length < 300){
+
+  console.log("HTML เล็กผิดปกติ ข้ามหน้า:",url);
+
+  emptyPages++;
+
+  if(emptyPages >= 5){
+    console.log("หน้าเสียหลายหน้าติดต่อกัน หยุดหมวด");
+    break;
+  }
+
   page++;
   continue;
 }
@@ -431,25 +454,27 @@ const $ = cheerio.load(html);
   });
 
   console.log("พบ", movies.length, "เรื่อง");
-  if(movies.length <= 2){
-  console.log("หนังน้อยผิดปกติ อาจใกล้จบหมวด");
-  }
-  if (movies.length === 0) {
+  
+  if(movies.length === 0){
 
   console.log("หน้านี้ไม่มีข้อมูล");
-
   emptyPages++;
 
-  if(emptyPages >= 5){
-    console.log("ว่างหลายหน้าแล้ว หยุด");
-    break;
-  }
+}else if(movies.length <= 2){
 
-  page++;
-  continue;
+  console.log("หนังน้อยผิดปกติ");
+  emptyPages++;
+
+}else{
+
+  emptyPages = 0;
+
 }
 
-emptyPages = 0;
+if(emptyPages >= 5){
+  console.log("หน้าเสียติดต่อกัน 5 หน้า หยุดหมวด");
+  break;
+}
 
   // ดึง player
 
@@ -515,7 +540,7 @@ const playlist = [];
 
 playlist.push("#EXTM3U");
 
-for (const movie of movies){
+for (const movie of allMovies){
 
   if (!movie.player) continue;
 
@@ -534,7 +559,7 @@ fs.writeFileSync(
 
 console.log("สร้าง playlist แล้ว");
 
-progress[category.slug] = page;
+progress[category.slug] = page + 1;
 fs.writeFileSync("progress.json", JSON.stringify(progress,null,2));
 
 if(page % 5 === 0){
