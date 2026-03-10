@@ -54,7 +54,7 @@ jobs:
       - name: Re-run workflow before timeout
         run: |
           echo "Waiting before re-run..."
-          sleep 21000
+          sleep 10
           gh workflow run "${{ github.workflow }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
