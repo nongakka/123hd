@@ -42,7 +42,7 @@ jobs:
           fi
 
       - name: Run scraper
-        run: node 123hd.js
+        run: node update123hd.js
 
       - name: Commit results
         run: |
