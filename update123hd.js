@@ -561,7 +561,7 @@ for (const movie of allMovies){
 
   if (!movie.player) continue;
 
-  playlist.push(`#EXTINF:-1 tvg-logo="${movie.image}",${movie.title}`);
+  playlist.push(`#EXTINF:-1 tvg-logo="${movie.image}" group-title="${category.name}",${movie.title}`);
   playlist.push(movie.player);
 
 }
